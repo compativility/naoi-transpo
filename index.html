@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transportation Expenses Slip</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #09090b;
+            --border: #ffffff1a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --card-bg: #111113;
+            --input-bg: #09090b;
+            --radius: 14px;
+
+            --primary: #fafafa;
+            --primary-text: #09090b;
+            --green: #16a34a;
+            --gray: #27272a;
+        }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .wrapper {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .hero {
+            margin-bottom: 28px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 999px;
+            padding: 6px 12px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 50px);
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            max-width: 650px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .controls {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 28px;
+        }
+
+        .controls-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 20px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .controls-top h2 {
+            font-size: 22px;
+            letter-spacing: -0.6px;
+            margin-bottom: 6px;
+        }
+
+        .controls-top p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .slip-info {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+            min-width: 180px;
+        }
+
+        .slip-info span {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .entry-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 920px;
+        }
+
+        .entry-table th {
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .entry-table th:nth-child(2) { width: 160px; } /* Date */
+        .entry-table th:nth-child(3) { width: 200px; } /* Dest */
+        .entry-table th:nth-child(4) { width: 140px; } /* MOT */
+        .entry-table th:nth-child(5) { width: 110px; } /* Amount */
+        .entry-table th:nth-child(6) { width: 150px; } /* Purpose */
+        .entry-table th:nth-child(7) { width: 160px; } /* RecBy */
+
+        .entry-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+            vertical-align: middle;
+        }
+
+        .entry-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .entry-table input,
+        .entry-table select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: .15s ease;
+        }
+
+        .entry-table input:focus,
+        .entry-table select:focus {
+            outline: none;
+            border-color: var(--text-muted);
+            background: var(--input-bg);
+        }
+
+        .entry-table input[type="number"] {
+            min-width: 100px;
+        }
+
+        .col-num {
+            width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .col-del {
+            width: 50px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .btn-del {
+            border: 1px solid #7f1d1d;
+            background: #450a0a;
+            color: #fca5a5;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: .15s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+        }
+
+        .btn-del:hover {
+            background: #7f1d1d;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: var(--input-bg);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-text);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #e4e4e7;
+            border-color: #e4e4e7;
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        .btn-green:hover {
+            background: #15803d;
+        }
+
+        .btn-gray {
+            background: var(--gray);
+            color: white;
+            border-color: var(--gray);
+        }
+
+        .btn-gray:hover {
+            background: #3f3f46;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 960px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .slip {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            font-size: 11px;
+            min-height: 280px;
+            font-family: Arial, sans-serif;
+        }
+
+        .slip.empty {
+            border: 1px dashed #ccc;
+            background: #fafafa;
+            min-height: 280px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .logo img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-company {
+            text-align: left;
+        }
+
+        .company {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .address {
+            font-size: 9px;
+            margin-top: 1px;
+        }
+
+        .header-title {
+            margin-top: 5px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 9.5px;
+            font-weight: bold;
+        }
+
+        .top-info span {
+            font-weight: normal;
+            margin-left: 2px;
+        }
+
+        .slip table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+
+        .slip table th,
+        .slip table td {
+            border: 1px solid #000;
+            padding: 2px 3px;
+            font-size: 9px;
+            height: 16px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .slip table th {
+            text-align: left;
+            font-weight: bold;
+            background: white;
+            color: black;
+        }
+
+        .purpose {
+            margin-top: 8px;
+            display: flex;
+            gap: 4px;
+            align-items: flex-start;
+            font-size: 9.5px;
+        }
+
+        .purpose-label {
+            font-style: italic;
+            font-weight: bold;
+            min-width: 50px;
+        }
+
+        .signature-section {
+            margin-top: auto;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .signature-box {
+            width: 44%;
+            text-align: center;
+        }
+
+        .signature-name {
+            font-size: 9.5px;
+            text-decoration: underline;
+            margin-bottom: 1px;
+        }
+
+        .signature-note {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-bottom: 3px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 100%;
+        }
+
+        .signature-spacer {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-bottom: 3px;
+            visibility: hidden;
+        }
+
+        .signature-label {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 9.5px;
+        }
+
+        .page-break {
+            page-break-after: always;
+            margin-bottom: 16px;
+        }
+
+        .back-link {
+            width: 100%;
+            max-width: 760px;
+            margin-bottom: 20px;
+        }
+
+        .back-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: var(--text);
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .controls {
+                padding: 16px;
+            }
+
+            .btn-group button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .table-wrapper {
+                border: none;
+                border-radius: 0;
+                overflow-x: visible;
+                background: transparent;
+            }
+
+            .entry-table {
+                min-width: 0;
+            }
+
+            .entry-table thead {
+                display: none;
+            }
+
+            .entry-table tbody tr {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                margin-bottom: 16px;
+                padding: 16px;
+                background: var(--input-bg);
+                gap: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .entry-table td {
+                padding: 0;
+                border: none;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .entry-table td[data-label]::before {
+                content: attr(data-label);
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--text-muted);
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .col-num {
+                width: 100%;
+                text-align: left;
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text);
+                border-bottom: 1px solid var(--border) !important;
+                padding-bottom: 12px !important;
+                margin-bottom: 4px;
+            }
+            .col-num::before { display: none !important; } /* Hide label for # */
+
+            .col-del {
+                width: 100%;
+                margin-top: 8px;
+            }
+            
+            .btn-del {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background: #450a0a;
+                color: #fca5a5;
+                border: 1px solid #7f1d1d;
+            }
+            .btn-del::after {
+                content: "Remove Entry";
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .hero,
+            .controls {
+                display: none;
+            }
+
+            .page {
+                max-width: none;
+                gap: 0;
+                padding: 4px;
+                margin-bottom: 0;
+            }
+
+            .slip {
+                page-break-inside: avoid;
+            }
+
+            .slip.empty {
+                display: none;
+            }
+
+            .page-break {
+                margin-bottom: 0;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .slip {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <div class="hero">
+            <div class="hero-badge">
+                <i class="fas fa-file-lines"></i>
+                Internal Utility Tool
+            </div>
+            
+            <h1>Transportation Expenses Slip Generator</h1>
+
+            <p>
+                Create, manage, and print transportation expense slips quickly with a clean and modern interface.
+            </p>
+        </div>
+
+        <div id="setupView" class="controls" style="max-width: 500px; margin: 40px auto; text-align: center;">
+            <h2 style="margin-bottom: 12px; font-size: 24px; letter-spacing: -0.5px;">Select Dates</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">
+                Please select the dates you want to generate slips for.
+            </p>
+            
+            <div style="margin-bottom: 24px; text-align: left;">
+                <input type="text" id="setupDates" placeholder="Click to select dates..." 
+                       style="width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 15px; font-family: inherit; background: var(--input-bg); color: var(--text); cursor: pointer;">
+            </div>
+
+            <button class="btn-primary" onclick="startWithDates()" style="width: 100%; justify-content: center; padding: 14px; font-size: 16px;">
+                OK, Continue
+                <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>
+            </button>
+        </div>
+
+        <div id="mainView" style="display: none;">
+            <div class="controls" id="controlsContainer">
+
+                <div class="controls-top" onclick="toggleAccordion()" style="cursor: pointer; user-select: none;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div>
+                            <h2 style="display: flex; align-items: center; gap: 8px;">
+                                Slip Entries 
+                                <i id="accordionIcon" class="fas fa-chevron-up" style="font-size: 14px; transition: 0.3s;"></i>
+                            </h2>
+                            <p>
+                                Fill in each row to generate printable transportation slips.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="slip-info">
+                        Slips: <span id="slipCount">0</span><br>
+                        Pages Needed: <span id="pageCount">0</span>
+                    </div>
+                </div>
+
+                <div id="accordionContent">
+                    <div class="table-wrapper">
+                        <table class="entry-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-num">#</th>
+                                    <th>Date</th>
+                                    <th>Destination</th>
+                                    <th>MOT</th>
+                                    <th>Amount</th>
+                                    <th>Purpose</th>
+                                    <th>Received By</th>
+                                    <th class="col-del"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="entryBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn-green" onclick="addRow()">
+                            <i class="fas fa-plus"></i>
+                            Add Slip
+                        </button>
+
+                        <button class="btn-primary" onclick="generateAll()">
+                            <i class="fas fa-file-export"></i>
+                            Generate Slips
+                        </button>
+
+                        <button onclick="window.print()">
+                            <i class="fas fa-print"></i>
+                            Print
+                        </button>
+
+                        <button class="btn-gray" onclick="clearAll()">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="output"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const today = new Date().toISOString().split('T')[0];
+        let rowCount = 0;
+
+        function formatDate(d) {
+            if (!d) return '';
+            const opts = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(d).toLocaleDateString('en-US', opts);
+        }
+
+        function addRow(data) {
+            rowCount++;
+            const n = rowCount;
+            const d = data || {};
+            const tbody = document.getElementById('entryBody');
+
+            const tr = document.createElement('tr');
+            tr.id = 'row_' + n;
+
+            tr.innerHTML = `
+            <td class="col-num" data-label="#">${n}</td>
+
+            <td data-label="Date">
+                <input type="text" class="multi-date" id="date_${n}" value="${d.date || today}" placeholder="Select dates...">
+            </td>
+
+            <td data-label="Destination">
+                <input type="text" id="dest_${n}" 
+                    value="${d.dest || ''}" 
+                    placeholder="FROM - TO">
+            </td>
+
+            <td data-label="MOT">
+                <select id="mot_${n}">
+                    <option ${(d.mot || '') == 'Motorcycle' ? 'selected' : ''}>Motorcycle</option>
+                    <option ${(d.mot || '') == 'Bus' ? 'selected' : ''}>Bus</option>
+                    <option ${(d.mot || '') == 'Van' ? 'selected' : ''}>Van</option>
+                    <option ${(d.mot || '') == 'Tricycle' ? 'selected' : ''}>Tricycle</option>
+                </select>
+            </td>
+
+            <td data-label="Amount">
+                <input type="number" id="amount_${n}" 
+                    value="${d.amount || ''}" 
+                    placeholder="0">
+            </td>
+
+            <td data-label="Purpose">
+                <input type="text" id="purpose_${n}" 
+                    value="${d.purpose || 'Scheduled duty'}" 
+                    placeholder="Purpose">
+            </td>
+
+            <td data-label="Received By">
+                <input type="text" id="recby_${n}" 
+                    value="${d.recby || ''}" 
+                    placeholder="Name">
+            </td>
+
+            <td class="col-del">
+                <button class="btn-del" onclick="removeRow(${n})">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </td>
+        `;
+
+            tbody.appendChild(tr);
+            
+            flatpickr(`#date_${n}`, {
+                mode: "multiple",
+                dateFormat: "Y-m-d",
+                defaultDate: d.date ? d.date.split(',').map(s => s.trim()) : today
+            });
+
+            updateCount();
+        }
+
+        function removeRow(n) {
+            const row = document.getElementById('row_' + n);
+            if (row) row.remove();
+            updateCount();
+            saveData();
+        }
+
+        function updateCount() {
+            const rows = document.querySelectorAll('#entryBody tr').length;
+
+            document.getElementById('slipCount').textContent = rows;
+            document.getElementById('pageCount').textContent =
+                Math.ceil(rows / 6) || 0;
+        }
+
+        function clearAll() {
+            document.getElementById('entryBody').innerHTML = '';
+            document.getElementById('output').innerHTML = '';
+            rowCount = 0;
+            updateCount();
+            localStorage.removeItem('transposlips_data');
+            
+            document.getElementById('mainView').style.display = 'none';
+            document.getElementById('setupView').style.display = 'block';
+            
+            const fp = document.getElementById('setupDates')._flatpickr;
+            if (fp) fp.clear();
+
+            const content = document.getElementById('accordionContent');
+            const icon = document.getElementById('accordionIcon');
+            if (content && icon) {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function slipHTML(data, isEmpty) {
+            if (isEmpty) {
+                return `<div class="slip empty"></div>`;
+            }
+
+            return `
+        <div class="slip">
+            <div class="header-top">
+                <div class="logo">
+                    <img src="logo.png" alt="Logo">
+                </div>
+
+                <div class="header-company">
+                    <div class="company">NEW ASIA OIL INCORPORATED</div>
+                    <div class="address">
+                        Coaco Road, Bo. Pampanga, Davao City
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-title">
+                TRANSPORTATION EXPENSES SLIP
+            </div>
+
+            <div class="top-info">
+                <div>
+                    AMOUNT: <span>${data.amount}</span>
+                </div>
+
+                <div>
+                    DATE: <span>${formatDate(data.date)}</span>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>DESTINATION (FROM - TO)</th>
+                        <th>MOT</th>
+                        <th>AMOUNT</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>${data.dest.toUpperCase()}</td>
+                        <td>${data.mot.toUpperCase()}</td>
+                        <td>${data.amount}</td>
+                    </tr>
+
+                    <tr><td>&nbsp;</td><td></td><td></td></tr>
+                    <tr><td>&nbsp;</td><td></td><td></td></tr>
+                    <tr><td>&nbsp;</td><td></td><td></td></tr>
+                    <tr><td>&nbsp;</td><td></td><td></td></tr>
+                </tbody>
+            </table>
+
+            <div class="purpose">
+                <div class="purpose-label">PURPOSE:</div>
+                <div>${data.purpose}</div>
+            </div>
+
+            <div class="signature-section">
+
+                <div class="signature-box">
+                    <div class="signature-name" style="visibility:hidden;">
+                        &nbsp;
+                    </div>
+
+                    <div class="signature-line"></div>
+
+                    <div class="signature-spacer">
+                        (Signature over Printed Name)
+                    </div>
+
+                    <div class="signature-label">
+                        APPROVED BY:
+                    </div>
+                </div>
+
+                <div class="signature-box">
+                    <div class="signature-name">
+                        ${data.recby}
+                    </div>
+
+                    <div class="signature-note">
+                        (Signature over Printed Name)
+                    </div>
+
+                    <div class="signature-label">
+                        RECEIVED BY:
+                    </div>
+                </div>
+
+            </div>
+        </div>`;
+        }
+
+        function generateAll() {
+            const rows = document.querySelectorAll('#entryBody tr');
+
+            if (rows.length === 0) {
+                alert('Please add at least one slip entry.');
+                return;
+            }
+
+            const slips = [];
+
+            rows.forEach(row => {
+                const id = row.id.replace('row_', '');
+                
+                const datesStr = document.getElementById('date_' + id)?.value || '';
+                const dates = datesStr.split(',').map(d => d.trim()).filter(d => d);
+                
+                if (dates.length === 0) dates.push(''); // fallback if empty
+
+                dates.forEach(dateStr => {
+                    slips.push({
+                        date: dateStr,
+                        dest: document.getElementById('dest_' + id)?.value || '',
+                        mot: document.getElementById('mot_' + id)?.value || '',
+                        amount: document.getElementById('amount_' + id)?.value || '',
+                        purpose: document.getElementById('purpose_' + id)?.value || '',
+                        recby: document.getElementById('recby_' + id)?.value || '',
+                    });
+                });
+            });
+
+            const perPage = 6;
+            let html = '';
+
+            for (let p = 0; p < slips.length; p += perPage) {
+                const chunk = slips.slice(p, p + perPage);
+
+                while (chunk.length < perPage) {
+                    chunk.push(null);
+                }
+
+                const isLast = (p + perPage) >= slips.length;
+
+                html += `<div class="page${isLast ? '' : ' page-break'}">`;
+
+                chunk.forEach(s => {
+                    html += slipHTML(s, s === null);
+                });
+
+                html += `</div>`;
+            }
+
+            document.getElementById('output').innerHTML = html;
+
+            const content = document.getElementById('accordionContent');
+            const icon = document.getElementById('accordionIcon');
+            content.style.display = 'none';
+            icon.style.transform = 'rotate(180deg)';
+
+            document.getElementById('output')
+                .scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = () => {
+            flatpickr('#setupDates', {
+                mode: 'multiple',
+                dateFormat: 'Y-m-d'
+            });
+            
+            const saved = localStorage.getItem('transposlips_data');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data && data.length > 0) {
+                        document.getElementById('setupView').style.display = 'none';
+                        document.getElementById('mainView').style.display = 'block';
+                        data.forEach(d => addRow(d));
+                    }
+                } catch(e) {}
+            }
+            
+            document.getElementById('entryBody').addEventListener('input', saveData);
+            document.getElementById('entryBody').addEventListener('change', saveData);
+        };
+        
+        function saveData() {
+            const rows = document.querySelectorAll('#entryBody tr');
+            const data = [];
+            rows.forEach(row => {
+                const id = row.id.replace('row_', '');
+                data.push({
+                    date: document.getElementById('date_' + id)?.value || '',
+                    dest: document.getElementById('dest_' + id)?.value || '',
+                    mot: document.getElementById('mot_' + id)?.value || '',
+                    amount: document.getElementById('amount_' + id)?.value || '',
+                    purpose: document.getElementById('purpose_' + id)?.value || '',
+                    recby: document.getElementById('recby_' + id)?.value || '',
+                });
+            });
+            localStorage.setItem('transposlips_data', JSON.stringify(data));
+        }
+
+        function startWithDates() {
+            const dates = document.getElementById('setupDates').value;
+            if (!dates) {
+                alert("Please select at least one date.");
+                return;
+            }
+            
+            document.getElementById('setupView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+            
+            const dateArray = dates.split(',').map(d => d.trim()).filter(d => d);
+            dateArray.forEach(d => {
+                addRow({
+                    date: d,
+                    dest: 'BUNAWAN - COACO - Bunawan',
+                    amount: '150',
+                    recby: 'Melnic Tubato'
+                });
+            });
+            
+            saveData();
+        }
+        function toggleAccordion() {
+            const content = document.getElementById('accordionContent');
+            const icon = document.getElementById('accordionIcon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</body>
+
+</html>
